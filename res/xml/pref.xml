@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" android:title="Settings">
+<EditTextPreference android:title="Mail Address" android:key="mail_address" android:singleLine="true"></EditTextPreference>
+<EditTextPreference android:title="Subject format" android:key="subject_format" android:singleLine="true"></EditTextPreference>
+<EditTextPreference android:title="Mail Body" android:key="mail_body"></EditTextPreference>
+<CheckBoxPreference android:defaultValue="false" android:key="auto_start_camera" android:title="Auto Start Camera" android:summaryOn="Start CAMERA when launching application." android:summaryOff="Don't start CAMERA"></CheckBoxPreference>
+<ListPreference android:title="Auto Quit" android:key="auto_quit" android:entryValues="@array/auto_quit_entryvalues" android:entries="@array/auto_quit_entries"></ListPreference>
+</PreferenceScreen>
