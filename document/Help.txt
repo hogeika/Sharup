@@ -1,0 +1,98 @@
+h2. 使い方
+
+h3. 起動画面
+!http://github.com/downloads/hogeika/Sharup/startup.png!
+
+起動したら、下にボタンが３つ出ます。
+# Take Picture
+# Choice Picture
+# Send Mail
+
+「Take Picture」を選ぶとカメラが起動するので、撮影してOKを押すと、チェックボックスとサムネイルがリストに追加されます。
+「Choice Picture」を選ぶとギャラリーが起動するので、画像を選択すると、ェックボックスとサムネイルがリストに追加されます。
+
+!http://github.com/downloads/hogeika/Sharup/picturelist.png!
+
+チェックボックスをタッチすると、リストからそのアイテムが消えます。
+
+「Send Mail」を選ぶと、アプリ選択リストが出るので、メールを選ぶと、リストに選択した画像を添付した状態で、送信メール編集画面に遷移します。
+
+h3. コンテキストメニュー
+!http://github.com/downloads/hogeika/Sharup/menu.png!
+
+コンテキストメニューは3つあります。
+# Setting
+# Clear
+# Help
+
+「Setting」は設定を開きます。
+「Clear」は選択リストをクリアします。
+「Help」は、Webブラウザでこのページを開きます。
+
+h3. 設定
+!http://github.com/downloads/hogeika/Sharup/settings.png!
+
+h4. Mail Address
+
+送信先のメールアドレスを設定します。","で区切って複数書けますが、分割が手抜きなので(string.split(",")してるだけ)なので、メールアドレスに","が含まれると動かないです。
+
+mixiの日記投稿用アドレスとか、blogの更新用メールアドレスとかを設定します。
+
+h4. Subject Format
+
+!http://github.com/downloads/hogeika/Sharup/subjectformat.png!
+
+送信するメールのタイトルを設定します。%xx形式で、時刻などに置き換える事ができます。
+
+例：
+
+<pre>
+%dd日(%HH:%mm)の写真
+</pre>
+
+という風に設定すると、現在時刻に応じて「17日(19:32)の写真」という感じに展開されます。
+
+%の後ろに書けるキーワードは以下のとおりです。
+
+|%|%が出ます|
+|G|紀元 |
+|yyyy|西暦年|
+|MM|月|
+|ww|年における週|
+|WW|月における週|
+|D|年における日|
+|dd|月における日|
+|F|月における曜日|
+|E|曜日|
+|a|午前/午後|
+|HH|一日における時 (0 ～ 23)|
+|kk|一日における時 (1 ～ 24)|
+|KK|午前/午後の時 (0 ～ 11)|
+|hh|午前/午後の時 (1 ～ 12)|
+|mm|分|
+|ss|秒|
+|SS|ミリ秒|
+|z|タイムゾーン|
+|Z|タイムゾーン|
+
+"参考":http://java.sun.com/j2se/1.5.0/ja/docs/ja/api/java/text/SimpleDateFormat.html
+
+h4. Mail Body
+
+送信するメールの本文を設定します。
+
+h4. Auto Start Camera
+
+チェックするとランチャーから本アプリを起動した最初の時に自動でカメラを起動します。
+
+h4. Auto Quit
+!http://github.com/downloads/hogeika/Sharup/autoquit.png!
+
+3種類の設定が選べます。
+# No
+# Confirm
+# Always
+
+「Confirm」を選ぶと、送信メールの編集画面から戻った時に、アプリを終了するかどうか確認ダイアログが出ます。
+「Always」を選ぶおと、確認ダイアログ無しに自動的に終了します。
+「No」を選ぶと、自動終了はしません。
