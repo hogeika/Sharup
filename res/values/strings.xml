@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Main!</string>
-    <string name="app_name">SandBox</string>
+    
+    <string name="app_name">Sharup</string>
 <string-array name="auto_quit_entries"><item>No</item>
 <item>Confirm</item>
 <item>Always</item>
