@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>SandBox</groupId>
-	<artifactId>SandBox</artifactId>
+	<groupId>Sharup</groupId>
+	<artifactId>Sharup</artifactId>
+	<name>Sharup</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>apk</packaging>
 
@@ -10,10 +11,13 @@
 		<dependency>
 			<groupId>android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.1_r1</version>
+			<version>1.6_r2</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	<url>http://hogeika.github.com/Sharup</url>
+	<scm>
+	</scm>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -23,7 +27,7 @@
 				<version>2.3.3</version>
 				<configuration>
 					<sdk>
-						<platform>7</platform>
+						<platform>4</platform>
 					</sdk>
 					<deleteConflictingFiles>
 						true
@@ -40,5 +44,15 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.0.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>

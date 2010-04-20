@@ -14,6 +14,7 @@ import org.hogeika.android.Sharup.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -242,7 +244,15 @@ public class Main extends Activity {
     	intent.putExtra(Intent.EXTRA_TEXT, body);
     	intent.setType("image/*");    	
     	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeParcelableArrayList());
-    	startActivityForResult(intent, REQUEST_SEND_MAIL);		
+    	try{
+    		startActivityForResult(intent, REQUEST_SEND_MAIL);
+    	}catch(ActivityNotFoundException e){
+    		new AlertDialog.Builder(this)
+				.setTitle("Error!")
+				.setMessage("Target Activity not found.")
+				.setPositiveButton("OK", null)
+				.show();
+    	}
 	}
 
 	private ArrayList<Parcelable> makeParcelableArrayList() {
@@ -278,26 +288,48 @@ public class Main extends Activity {
 			addItem(uri);
 		}
 	}
+	
+	
+//  for Android 2.1 (API Level 7)
+//	@Override
+//	public void onBackPressed() {
+//		if(itemMap.isEmpty()){
+//			super.onBackPressed();
+//			return;
+//		}
+//		new AlertDialog.Builder(this)
+//			.setTitle("Quit?")
+//			.setMessage("Really Quit and dispose selection?")
+//			.setPositiveButton("OK",new DialogInterface.OnClickListener() {				
+//				public void onClick(DialogInterface arg0, int arg1) {
+//					finish();
+//				}
+//			})
+//			.setNegativeButton("Cancel", null)
+//			.show();
+//	}
 
+	// for Android 1.6 (API Level 4)
 	@Override
-	public void onBackPressed() {
-		if(itemMap.isEmpty()){
-			super.onBackPressed();
-			return;
-		}
-		new AlertDialog.Builder(this)
-			.setTitle("Quit?")
-			.setMessage("Really Quit and dispose selection?")
-			.setPositiveButton("OK",new DialogInterface.OnClickListener() {				
-				public void onClick(DialogInterface arg0, int arg1) {
-					finish();
-				}
-			})
-			.setNegativeButton("Cancel", null)
-			.show();
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			if(itemMap.isEmpty()){
+				return super.onKeyDown(keyCode, event);
+			}
+			new AlertDialog.Builder(this)
+				.setTitle("Quit?")
+				.setMessage("Really Quit and dispose selection?")
+				.setPositiveButton("OK",new DialogInterface.OnClickListener() {				
+					public void onClick(DialogInterface arg0, int arg1) {
+						finish();
+					}
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
+			return true;
+	    }
+		return super.onKeyDown(keyCode, event);
 	}
-
-
 
 	// menu handling 
 
