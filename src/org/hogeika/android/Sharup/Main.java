@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hogeika.android.Sharup.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -87,7 +85,23 @@ public class Main extends Activity {
 		}); 
         sendMailButton.setEnabled(false);
         
-        if(savedInstanceState == null && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (Intent.ACTION_SEND.equals(action) && intent.hasExtra(Intent.EXTRA_STREAM)) {
+        	Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        	addItem(uri);
+        	sendMail();
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)
+        		&& intent.hasExtra(Intent.EXTRA_STREAM)) {
+        	ArrayList<Parcelable> list = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        	if (list != null) {
+        		for (Parcelable parcelable : list) {
+        			Uri uri = (Uri) parcelable;
+        			addItem(uri);
+        		}
+        		sendMail();
+        	}
+        } if(Intent.ACTION_MAIN.equals(action) && savedInstanceState == null && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
         	takePicture();
         }
     }
@@ -238,12 +252,24 @@ public class Main extends Activity {
 		String subject = pref.getString("subject_format", "");
 		String body = pref.getString("mail_body", "");
 		
-    	Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-    	intent.putExtra(Intent.EXTRA_EMAIL, email.split(",")); // TODO conformance RFC2822
-    	intent.putExtra(Intent.EXTRA_SUBJECT, formatSubject(subject));
-    	intent.putExtra(Intent.EXTRA_TEXT, body);
-    	intent.setType("image/*");    	
-    	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeParcelableArrayList());
+		Intent intent;
+		if(itemMap.size() == 1){
+	    	intent = new Intent(Intent.ACTION_SEND);
+	    	intent.putExtra(Intent.EXTRA_EMAIL, email.split(",")); // TODO conformance RFC2822
+	    	intent.putExtra(Intent.EXTRA_SUBJECT, formatSubject(subject));
+	    	intent.putExtra(Intent.EXTRA_TEXT, body);
+	    	intent.setType("image/*");    	
+	    	Uri uri = (itemMap.values().toArray(new ItemInfo[0]))[0].getUri();
+	    	intent.putExtra(Intent.EXTRA_STREAM, uri);
+		}else{
+	    	intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+	    	intent.putExtra(Intent.EXTRA_EMAIL, email.split(",")); // TODO conformance RFC2822
+	    	intent.putExtra(Intent.EXTRA_SUBJECT, formatSubject(subject));
+	    	intent.putExtra(Intent.EXTRA_TEXT, body);
+	    	intent.setType("image/*");    	
+	    	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeParcelableArrayList());
+		}
+
     	try{
     		startActivityForResult(intent, REQUEST_SEND_MAIL);
     	}catch(ActivityNotFoundException e){

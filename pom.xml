@@ -16,7 +16,12 @@
 		</dependency>
 	</dependencies>
 	<url>http://hogeika.github.com/Sharup</url>
+	<issueManagement>
+		<system>Github</system>
+		<url>http://github.com/hogeika/Sharup/issues</url>
+	</issueManagement>
 	<scm>
+		<url>git://github.com/hogeika/Sharup.git</url>
 	</scm>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -50,7 +55,22 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.0.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependencies</report>
+							<report>about</report>
+							<!--<report>project-team</report>-->
+							<!--<report>mailing-list</report>-->
+							<!--<report>cim</report>-->
+							<report>summary</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+
 			</plugin>
 		</plugins>
 	</reporting>
