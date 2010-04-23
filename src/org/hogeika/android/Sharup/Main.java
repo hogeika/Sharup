@@ -101,7 +101,7 @@ public class Main extends Activity {
         		}
         		sendMail();
         	}
-        } if(Intent.ACTION_MAIN.equals(action) && savedInstanceState == null && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
+        } else if(Intent.ACTION_MAIN.equals(action) && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER) && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
         	takePicture();
         }
     }
