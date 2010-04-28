@@ -1,7 +1,10 @@
 package org.hogeika.android.Sharup;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,17 +16,21 @@ import java.util.regex.Pattern;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -260,14 +267,14 @@ public class Main extends Activity {
 	    	intent.putExtra(Intent.EXTRA_TEXT, body);
 	    	intent.setType("image/*");    	
 	    	Uri uri = (itemMap.values().toArray(new ItemInfo[0]))[0].getUri();
-	    	intent.putExtra(Intent.EXTRA_STREAM, uri);
+	    	intent.putExtra(Intent.EXTRA_STREAM, getActualUri(uri));
 		}else{
 	    	intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
 	    	intent.putExtra(Intent.EXTRA_EMAIL, email.split(",")); // TODO conformance RFC2822
 	    	intent.putExtra(Intent.EXTRA_SUBJECT, formatSubject(subject));
 	    	intent.putExtra(Intent.EXTRA_TEXT, body);
 	    	intent.setType("image/*");    	
-	    	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeParcelableArrayList());
+	    	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeActualParcelableArrayList());
 		}
 
     	try{
@@ -287,6 +294,17 @@ public class Main extends Activity {
     		params.add(info.getUri());
     	}
 		return params;
+	}
+	
+	private ArrayList<Parcelable> makeActualParcelableArrayList(){
+		ArrayList<Parcelable> params = new ArrayList<Parcelable>();
+    	for(ItemInfo info : itemMap.values()){
+    		Uri tmpUri = getActualUri(info.getUri());
+    		if(tmpUri != null){ // Ugh! take care error case.
+    			params.add(tmpUri);
+    		}
+    	}
+		return params;		
 	}
 	
 	private void openSetting(){
@@ -413,7 +431,6 @@ public class Main extends Activity {
 			}else{
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inSampleSize = Math.max(Math.round(width / boundWidth),Math.round(height / boundHeight));
-				is = getContentResolver().openInputStream(uri);
 				return BitmapFactory.decodeStream(is,null,options);
 			}
 		} catch (IOException e) {
@@ -424,6 +441,77 @@ public class Main extends Activity {
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	private Uri getActualUri(Uri src){
+		int resize_factor = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("resize_factor", "1"));
+		if(resize_factor == 1){
+			return src;
+		}
+		
+		ContentResolver resolver = getContentResolver();
+		Cursor cursor = resolver.query(src, new String[]{Images.Media.TITLE}, null, null, null);
+		if(cursor.getCount() != 1){
+			// TODO Ugh!
+			return null;
+		}
+		cursor.moveToFirst();
+		String base_filename = cursor.getString(cursor.getColumnIndex(Images.Media.TITLE));    	
+    	
+    	String tmp_filename = base_filename + "_resized.jpg";
+
+		File tmp_file;
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = getContentResolver().openInputStream(src);
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = resize_factor;
+			Bitmap bitmap = BitmapFactory.decodeStream(is,null,options);
+			
+			File tmp_dir = new File(Environment.getExternalStorageDirectory(), "Sharup_tmp");
+			if(!tmp_dir.exists()){
+				if(!tmp_dir.mkdir()){
+					// TODO Ugh! 
+					return null;
+				}
+			}
+			tmp_file = new File(tmp_dir, tmp_filename);
+			if(tmp_file.exists()){
+				if(!tmp_file.delete()){
+					// TODO Ugh!
+					return null;
+				}
+			}
+			if (tmp_file.createNewFile()) {  
+				os  = new FileOutputStream(tmp_file);  
+				if (bitmap != null) {  
+					bitmap.compress(CompressFormat.JPEG, 75, os);  
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}  finally {
+			try {
+				if(is != null){
+					is.close();
+				}
+				if(os != null){
+					os.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+		
+    	ContentValues values = new ContentValues();
+    	values.put(Images.Media.TITLE, tmp_filename);
+       	values.put(Images.Media.MIME_TYPE, "image/jpeg");
+       	values.put(Images.Media.DATA, tmp_file.toString());
+    	tmpUri = getContentResolver().insert(externalContnetURI, values);
+    	
+		return tmpUri;
 	}
 	
 	private String formatSubject(String format){

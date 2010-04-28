@@ -10,4 +10,12 @@
 <item>CONFIRM</item>
 <item>ALWAYS</item>
 </string-array>
+<string-array name="resize_factor_entries"><item>No Resize</item>
+<item>1/2</item>
+<item>1/4</item>
+</string-array>
+<string-array name="resize_factor_entryvalues"><item>1</item>
+<item>2</item>
+<item>4</item>
+</string-array>
 </resources>
