@@ -46,6 +46,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class Main extends Activity {
@@ -529,10 +530,10 @@ public class Main extends Activity {
 		if(files.length == 0){
 			return;
 		}
-		// TODO Ugh! show progress dialog
+		Toast.makeText(this, "Creaning up temporary files.", Toast.LENGTH_SHORT).show();
 		long now = new Date().getTime();
 		for(File f : files){
-			if(now - f.lastModified() >  24*60*60*1000){
+			if(now - f.lastModified() > 24*60*60*1000){
 				f.delete();
 			}
 		}
