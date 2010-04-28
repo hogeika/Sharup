@@ -50,6 +50,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class Main extends Activity {
 
+	private static final String SHARUP_TMP = "Sharup_tmp";
+
 	private static final String HELP_SITE = "http://wiki.github.com/hogeika/Sharup/help";
 
 	private int localId = 1;
@@ -108,9 +110,13 @@ public class Main extends Activity {
         		}
         		sendMail();
         	}
-        } else if(Intent.ACTION_MAIN.equals(action) && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER) && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
-        	takePicture();
-        }
+        } else if(Intent.ACTION_MAIN.equals(action) && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)){
+        	if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
+               	takePicture();
+        	}else{
+        		cleanTempDir();
+        	}
+         }
     }
     
     private class ItemInfo {
@@ -469,7 +475,7 @@ public class Main extends Activity {
 			options.inSampleSize = resize_factor;
 			Bitmap bitmap = BitmapFactory.decodeStream(is,null,options);
 			
-			File tmp_dir = new File(Environment.getExternalStorageDirectory(), "Sharup_tmp");
+			File tmp_dir = new File(Environment.getExternalStorageDirectory(), SHARUP_TMP);
 			if(!tmp_dir.exists()){
 				if(!tmp_dir.mkdir()){
 					// TODO Ugh! 
@@ -512,6 +518,24 @@ public class Main extends Activity {
     	tmpUri = getContentResolver().insert(externalContnetURI, values);
     	
 		return tmpUri;
+	}
+	
+	private void cleanTempDir(){
+		File tmp_dir = new File(Environment.getExternalStorageDirectory(), SHARUP_TMP);
+		if(!tmp_dir.exists()){
+			return;
+		}
+		File files[] = tmp_dir.listFiles();
+		if(files.length == 0){
+			return;
+		}
+		// TODO Ugh! show progress dialog
+		long now = new Date().getTime();
+		for(File f : files){
+			if(now - f.lastModified() >  24*60*60*1000){
+				f.delete();
+			}
+		}
 	}
 	
 	private String formatSubject(String format){
