@@ -1,6 +1,7 @@
 package org.hogeika.android.Sharup;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +80,7 @@ public class Main extends Activity {
 				takePicture();
 			}
 		});
-        
+      
         choicePictureButton = (Button) findViewById(R.id.Button_ChoicePicture);
         choicePictureButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -511,14 +512,11 @@ public class Main extends Activity {
 			} catch (IOException e) {
 			}
 		}
-		
     	ContentValues values = new ContentValues();
     	values.put(Images.Media.TITLE, tmp_filename);
        	values.put(Images.Media.MIME_TYPE, "image/jpeg");
        	values.put(Images.Media.DATA, tmp_file.toString());
-    	tmpUri = getContentResolver().insert(externalContnetURI, values);
-    	
-		return tmpUri;
+    	return getContentResolver().insert(externalContnetURI, values);
 	}
 	
 	private void cleanTempDir(){
@@ -526,16 +524,18 @@ public class Main extends Activity {
 		if(!tmp_dir.exists()){
 			return;
 		}
-		File files[] = tmp_dir.listFiles();
+		final long now = new Date().getTime();
+		File files[] = tmp_dir.listFiles(new FileFilter() {	
+			public boolean accept(File file) {	
+				return now - file.lastModified() > 0; //24*60*60*1000;
+			}
+		});
 		if(files.length == 0){
 			return;
 		}
 		Toast.makeText(this, "Creaning up temporary files.", Toast.LENGTH_SHORT).show();
-		long now = new Date().getTime();
 		for(File f : files){
-			if(now - f.lastModified() > 24*60*60*1000){
-				f.delete();
-			}
+			f.delete();
 		}
 	}
 	
