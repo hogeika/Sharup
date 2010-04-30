@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android" android:title="Settings">
-<EditTextPreference android:title="Mail Address" android:key="mail_address" android:singleLine="true"></EditTextPreference>
-<EditTextPreference android:title="Subject format" android:key="subject_format" android:singleLine="true" android:defaultValue="%dd日(%HH:%mm)の写真"></EditTextPreference>
-<EditTextPreference android:title="Mail Body" android:key="mail_body"></EditTextPreference>
-<ListPreference android:key="resize_factor" android:title="Resize factor" android:entryValues="@array/resize_factor_entryvalues" android:entries="@array/resize_factor_entries"></ListPreference>
-<PreferenceCategory android:title="Advaiced"></PreferenceCategory>
-<CheckBoxPreference android:defaultValue="false" android:key="auto_start_camera" android:title="Auto Start Camera" android:summaryOn="Start CAMERA when launching application." android:summaryOff="Don't start CAMERA"></CheckBoxPreference>
-<ListPreference android:title="Auto Quit" android:key="auto_quit" android:entryValues="@array/auto_quit_entryvalues" android:entries="@array/auto_quit_entries"></ListPreference>
-<CheckBoxPreference android:title="Silent mode" android:key="silent_mode" android:defaultValue="false"></CheckBoxPreference>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="Settings">
+	<EditTextPreference android:title="Mail Address"
+		android:key="mail_address" android:singleLine="true"></EditTextPreference>
+	<EditTextPreference android:title="Subject format"
+		android:key="subject_format" android:singleLine="true"
+		android:defaultValue="%dd日(%HH:%mm)の写真" android:persistent="true"></EditTextPreference>
+	<EditTextPreference android:title="Mail Body"
+		android:key="mail_body"></EditTextPreference>
+	<ListPreference android:key="resize_factor"
+		android:title="Resize factor" android:entryValues="@array/resize_factor_entryvalues"
+		android:entries="@array/resize_factor_entries" android:defaultValue="1"></ListPreference>
+	<PreferenceCategory android:title="Advanced"></PreferenceCategory>
+	<CheckBoxPreference android:defaultValue="false"
+		android:key="auto_start_camera" android:title="Auto Start Camera"
+		android:summaryOn="Start CAMERA when launching application."
+		android:summaryOff="Don't start CAMERA"></CheckBoxPreference>
+	<ListPreference android:title="Auto Quit" android:key="auto_quit"
+		android:entryValues="@array/auto_quit_entryvalues" android:entries="@array/auto_quit_entries"
+		android:defaultValue="NO"></ListPreference>
+	<PreferenceCategory android:title="Experimental"></PreferenceCategory>
+	<CheckBoxPreference android:title="Silent mode"
+		android:key="silent_mode" android:defaultValue="false"
+		android:summaryOff="Don't care" android:summaryOn="Set sytem volume to zero before start camera."></CheckBoxPreference>
 </PreferenceScreen>
