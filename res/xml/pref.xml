@@ -20,7 +20,7 @@
 		android:entryValues="@array/auto_quit_entryvalues" android:entries="@array/auto_quit_entries"
 		android:defaultValue="NO"></ListPreference>
 	<PreferenceCategory android:title="Experimental"></PreferenceCategory>
-	<CheckBoxPreference android:title="Silent mode"
+	<CheckBoxPreference android:title="Silent Mode"
 		android:key="silent_mode" android:defaultValue="false"
 		android:summaryOff="Don't care" android:summaryOn="Set sytem volume to zero before start camera."></CheckBoxPreference>
 </PreferenceScreen>
