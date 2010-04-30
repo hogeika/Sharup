@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.media.AudioManager;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
@@ -143,7 +144,8 @@ public class Main extends Activity {
     private final int REQUEST_CHOICE_PICTURE = 1;
     private final int REQUEST_SEND_MAIL = 2;
     
-    private Uri tmpUri;
+    private Uri tmpUri = null;
+    private int prevVolume = 0;
     
     private void takePicture(){
     	SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");
@@ -156,7 +158,18 @@ public class Main extends Activity {
 
     	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     	intent.putExtra(MediaStore.EXTRA_OUTPUT, tmpUri);
-    	startActivityForResult(intent, REQUEST_TAKE_PICTURE);
+    	
+		try{
+			intoSilentMode();
+			startActivityForResult(intent, REQUEST_TAKE_PICTURE);
+    	}catch(ActivityNotFoundException e){
+    		cancelSilentMode();
+    		new AlertDialog.Builder(this)
+				.setTitle("Error!")
+				.setMessage("Can't start camera.")
+				.setPositiveButton("OK", null)
+				.show();
+    	}
     }
     
     private void choicePicture(){
@@ -169,6 +182,9 @@ public class Main extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
+    	if(requestCode == REQUEST_TAKE_PICTURE){
+    		cancelSilentMode();
+    	}
     	if (resultCode == Activity.RESULT_OK){
     		switch(requestCode){
     		case REQUEST_TAKE_PICTURE:
@@ -285,7 +301,7 @@ public class Main extends Activity {
 	    	intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, makeActualParcelableArrayList());
 		}
 
-    	try{
+		try{
     		startActivityForResult(intent, REQUEST_SEND_MAIL);
     	}catch(ActivityNotFoundException e){
     		new AlertDialog.Builder(this)
@@ -323,12 +339,14 @@ public class Main extends Activity {
 	// Saving activity state
 	private static final String BUNDLE_URI_LIST = "bundle_uri_list";
 	private static final String BUNDLE_TMP_URI = "tmp_url";
+	private static final String BUNDLE_PREV_VOLUME = "prev_volume";
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(BUNDLE_TMP_URI, tmpUri);
 		outState.putParcelableArrayList(BUNDLE_URI_LIST, makeParcelableArrayList());
+		outState.putInt(BUNDLE_PREV_VOLUME, prevVolume);
 	}
 
 	@Override
@@ -339,6 +357,7 @@ public class Main extends Activity {
 			Uri uri = (Uri)parcelable;
 			addItem(uri);
 		}
+		prevVolume = savedInstanceState.getInt(BUNDLE_PREV_VOLUME);
 	}
 	
 	
@@ -575,6 +594,27 @@ public class Main extends Activity {
 			}			
 		};
 		new Scanner(this);
+	}
+	
+	private static final int VOLUME_TYPE = AudioManager.STREAM_SYSTEM;
+	
+	private void intoSilentMode(){
+		if(! PreferenceManager.getDefaultSharedPreferences(this).getBoolean("silent_mode", false)){
+			return;
+		}
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		prevVolume = am.getStreamVolume(VOLUME_TYPE);
+		am.setStreamVolume(VOLUME_TYPE, 0, 0);
+	}
+	
+	private void cancelSilentMode(){
+		if(! PreferenceManager.getDefaultSharedPreferences(this).getBoolean("silent_mode", false)){
+			return;
+		}
+		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		if(am.getStreamVolume(VOLUME_TYPE) == 0 && prevVolume > 0){
+			am.setStreamVolume(VOLUME_TYPE, prevVolume, 0);
+		}
 	}
 
 }
