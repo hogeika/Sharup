@@ -1,6 +1,7 @@
 h2. 使い方
 
 h3. 起動画面
+
 !http://github.com/downloads/hogeika/Sharup/startup.png!
 
 起動したら、下にボタンが３つ出ます。
@@ -28,6 +29,7 @@ h3. 起動画面
 これで、Sharupの設定内容（送信先、メールタイトル）などが入った状態で、一気にメール編集画面が起動します。
 
 h3. コンテキストメニュー
+
 !http://github.com/downloads/hogeika/Sharup/menu.png!
 
 コンテキストメニューは3つあります。
@@ -40,6 +42,7 @@ h3. コンテキストメニュー
 「Help」は、Webブラウザでこのページを開きます。
 
 h3. 設定
+
 !http://github.com/downloads/hogeika/Sharup/settings.png!
 
 h4. Mail Address
@@ -92,11 +95,14 @@ h4. Mail Body
 送信するメールの本文を設定します。
 
 h4. Resize factor
+
 !http://github.com/downloads/hogeika/Sharup/resizefactor.png!
 添付する前に、ファイルを縮小する設定ができます。
+
 # No Resize
 # 1/2
 # 1/4
+
 が選べます。
 縮小する設定を使うと、外部メモリに"Sharup_tmp"フォルダを作って、メールアプリに縮小したファイルを渡すための一時を保存します。
 メールを送信する前にファイルが消えると、0バイトの添付が送られる様なので(Android2.1の標準メールアプリ)、
@@ -107,9 +113,11 @@ h4. Auto Start Camera
 チェックするとランチャーから本アプリを起動した最初の時に自動でカメラを起動します。
 
 h4. Auto Quit
+
 !http://github.com/downloads/hogeika/Sharup/autoquit.png!
 
 3種類の設定が選べます。
+
 # No
 # Confirm
 # Always
