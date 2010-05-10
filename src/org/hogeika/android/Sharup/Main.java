@@ -114,7 +114,6 @@ public class Main extends Activity {
         		sendMail();
         	}
         } else if(Intent.ACTION_MAIN.equals(action) && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER) && savedInstanceState == null){
-    		cleanTempDir();
         	if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
                	takePicture();
         	}
@@ -399,6 +398,12 @@ public class Main extends Activity {
 			return true;
 	    }
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void onDestroy() {
+		cleanTempDir();
+		super.onDestroy();
 	}
 
 	// menu handling 
