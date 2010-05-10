@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +100,7 @@ public class Main extends Activity {
         
         Intent intent = getIntent();
         String action = intent.getAction();
+        Set<String> categories = intent.getCategories();
         if (Intent.ACTION_SEND.equals(action) && intent.hasExtra(Intent.EXTRA_STREAM)) {
         	Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         	addItem(uri);
@@ -113,7 +115,7 @@ public class Main extends Activity {
         		}
         		sendMail();
         	}
-        } else if(Intent.ACTION_MAIN.equals(action) && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER) && savedInstanceState == null){
+        } else if(Intent.ACTION_MAIN.equals(action) && (categories != null && intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) && savedInstanceState == null){
         	if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_start_camera", false)){
                	takePicture();
         	}
