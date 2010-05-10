@@ -550,7 +550,7 @@ public class Main extends Activity {
 		final long now = new Date().getTime();
 		File files[] = tmp_dir.listFiles(new FileFilter() {	
 			public boolean accept(File file) {	
-				return now - file.lastModified() > 0; //24*60*60*1000;
+				return now - file.lastModified() > 24*60*60*1000;
 			}
 		});
 		if(files.length == 0){
